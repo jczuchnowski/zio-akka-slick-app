@@ -1,7 +1,7 @@
 package example.application
 
 import example.domain._
-import scalaz.zio.ZIO
+import zio.ZIO
 
 object ApplicationService {
 

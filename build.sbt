@@ -16,6 +16,7 @@ lazy val root = (project in file("."))
       sprayJson,
       scalazZio,
       scalazZioRS,
+      scalazZioIntRS,
       slick,
       h2,
       scalaTest % Test,

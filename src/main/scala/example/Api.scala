@@ -10,12 +10,11 @@ import example.domain.PortfolioStatus
 import example.infrastructure._
 import example.interop.ZioSupport
 import example.interop.slick.DatabaseProvider
-//import scalaz.zio.{ App, ZIO }
 import slick.driver.H2Driver.api._
 import scala.io.StdIn
 import scala.concurrent.Future
 
-import scalaz.zio._
+import zio._
 
 import akka.http.scaladsl.server.Directives
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport

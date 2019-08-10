@@ -4,13 +4,14 @@ object Dependencies {
 
   val akkaVersion     = "2.5.19"
   val akkaHttpVersion = "10.1.8"
-  val zioVersion      = "1.0-RC3"
+  val zioVersion      = "1.0.0-RC11-1"
 
   lazy val akkaHttp        = "com.typesafe.akka"       %% "akka-http"    % akkaHttpVersion
   lazy val akkaStream      = "com.typesafe.akka"       %% "akka-stream"  % akkaVersion
   lazy val sprayJson       = "com.typesafe.akka"       %% "akka-http-spray-json" % akkaHttpVersion
-  lazy val scalazZio       = "org.scalaz"              %% "scalaz-zio"   % zioVersion
-  lazy val scalazZioRS     = "org.scalaz"              %% "scalaz-zio-interop-reactivestreams" % zioVersion
+  lazy val scalazZio       = "dev.zio"                 %% "zio" % zioVersion
+  lazy val scalazZioRS     = "dev.zio"                 %% "zio-streams" % zioVersion
+  lazy val scalazZioIntRS  = "dev.zio"                 %% "zio-interop-reactivestreams" % "1.0.2.0-RC1"
   lazy val slick           = "com.typesafe.slick"      %% "slick"        % "3.3.0"
   lazy val akkaHttpTestkit = "com.typesafe.akka"       %% "akka-http-testkit" % akkaHttpVersion
   lazy val akkaTestkit     = "com.typesafe.akka"       %% "akka-testkit" % akkaVersion

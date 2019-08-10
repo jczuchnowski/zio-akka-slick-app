@@ -6,7 +6,7 @@ import example.infrastructure.EntityIdMappers._
 
 object AssetsTable {
 
-  case class LiftedAsset(id: Rep[AssetId], name: Rep[String], price: Rep[BigDecimal])
+  case class LiftedAsset(id: Rep[Option[AssetId]], name: Rep[String], price: Rep[BigDecimal])
   
   implicit object AssetShape extends CaseClassShape(LiftedAsset.tupled, Asset.tupled)
   

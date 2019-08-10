@@ -1,7 +1,7 @@
-package example.interop
+package example.interop.slick
 
-import scalaz.zio.{ DefaultRuntime, UIO }
-import scalaz.zio.blocking.Blocking
+import zio.{ DefaultRuntime, UIO }
+import zio.blocking.Blocking
 import _root_.slick.util.AsyncExecutor
 
 import scala.concurrent.ExecutionContext

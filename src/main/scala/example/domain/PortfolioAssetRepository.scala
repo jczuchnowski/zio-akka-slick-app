@@ -1,6 +1,6 @@
 package example.domain
 
-import scalaz.zio.IO
+import zio.IO
 
 trait PortfolioAssetRepository {
   
@@ -12,10 +12,11 @@ object PortfolioAssetRepository {
   
   trait Service {
   
-    def add(portfolioId: PortfolioId, assetId: AssetId, amount: BigDecimal): IO[Exception, Unit]
+    def add(portfolioId: PortfolioId, assetId: AssetId, amount: BigDecimal): IO[RepositoryException, Unit]
 
-    def getByPortfolioId(portfolioId: PortfolioId): IO[Exception, List[PortfolioAsset]]
+    def getByPortfolioId(portfolioId: PortfolioId): IO[RepositoryException, List[PortfolioAsset]]
 
+    def getByAssetId(assetId: AssetId): IO[RepositoryException, List[PortfolioAsset]]
   }
 
 }

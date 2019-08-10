@@ -1,7 +1,7 @@
 package example.infrastructure
 
 import slick.driver.H2Driver.api._
-import scalaz.zio.{ IO, ZIO }
+import zio.{ IO, ZIO }
 import example.domain._
 import example.infrastructure.EntityIdMappers._
 import example.infrastructure.tables.PortfolioAssetsTable
@@ -14,18 +14,19 @@ trait SlickPortfolioAssetRepository extends PortfolioAssetRepository with Databa
 
   val portfolioAssetRepository = new PortfolioAssetRepository.Service {
 
-    def add(portfolioId: PortfolioId, assetId: AssetId, amount: BigDecimal): IO[Exception, Unit] = ???
+    def add(portfolioId: PortfolioId, assetId: AssetId, amount: BigDecimal): IO[RepositoryException, Unit] = ???
 
-    def getByPortfolioId(portfolioId: PortfolioId): IO[Exception, List[PortfolioAsset]] = {
+    def getByPortfolioId(portfolioId: PortfolioId): IO[RepositoryException, List[PortfolioAsset]] = {
       val query = portfolioAssets.filter(_.portfolioId === portfolioId)
 
       ZIO.fromDBIO(query.result).provide(self)
         .map(_.toList)
         .refineOrDie {
-          case e: Exception => e
+          case e: Exception => new RepositoryException(e)
         }
     }
 
+    def getByAssetId(assetId: AssetId): IO[RepositoryException, List[PortfolioAsset]] = ???
   }
 
 }

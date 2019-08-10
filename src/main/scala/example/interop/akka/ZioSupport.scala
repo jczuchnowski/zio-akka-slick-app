@@ -1,7 +1,7 @@
 package example.interop
 
 import akka.http.scaladsl.marshalling.Marshaller
-import scalaz.zio.{ DefaultRuntime, ZIO }
+import zio.{ DefaultRuntime, ZIO }
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.model.HttpResponse
 

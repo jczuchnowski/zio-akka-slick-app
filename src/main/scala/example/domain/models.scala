@@ -2,7 +2,7 @@ package example.domain
 
 case class AssetId(value: Long) extends AnyVal
 
-case class Asset(id: AssetId, name: String, price: BigDecimal)
+case class Asset(id: Option[AssetId], name: String, price: BigDecimal)
 
 case class PortfolioAsset(portfolioId: PortfolioId, assetId: AssetId, amount: BigDecimal)
 

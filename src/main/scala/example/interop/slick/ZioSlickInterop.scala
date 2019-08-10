@@ -1,8 +1,8 @@
 package example.interop.slick
 
-import scalaz.zio.{ IO, UIO, ZIO }
-import scalaz.zio.interop.reactiveStreams._
-import scalaz.zio.stream.ZStream
+import zio.{ IO, UIO, ZIO }
+import zio.interop.reactiveStreams._
+import zio.stream.ZStream
 import slick.basic.DatabasePublisher
 import slick.dbio.{ DBIO, StreamingDBIO }
 import slick.basic.BasicBackend
@@ -34,3 +34,4 @@ object dbio {
   }
 
 }
+
