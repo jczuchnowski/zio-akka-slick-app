@@ -12,11 +12,11 @@ object PortfolioAssetRepository {
   
   trait Service {
   
-    def add(portfolioId: PortfolioId, assetId: AssetId, amount: BigDecimal): IO[RepositoryException, Unit]
+    def add(portfolioId: PortfolioId, assetId: AssetId, amount: BigDecimal): IO[RepositoryFailure, Unit]
 
-    def getByPortfolioId(portfolioId: PortfolioId): IO[RepositoryException, List[PortfolioAsset]]
+    def getByPortfolioId(portfolioId: PortfolioId): IO[RepositoryFailure, List[PortfolioAsset]]
 
-    def getByAssetId(assetId: AssetId): IO[RepositoryException, List[PortfolioAsset]]
+    def getByAssetId(assetId: AssetId): IO[RepositoryFailure, List[PortfolioAsset]]
   }
 
 }

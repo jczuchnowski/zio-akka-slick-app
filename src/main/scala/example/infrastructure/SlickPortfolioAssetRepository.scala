@@ -14,19 +14,19 @@ trait SlickPortfolioAssetRepository extends PortfolioAssetRepository with Databa
 
   val portfolioAssetRepository = new PortfolioAssetRepository.Service {
 
-    def add(portfolioId: PortfolioId, assetId: AssetId, amount: BigDecimal): IO[RepositoryException, Unit] = ???
+    def add(portfolioId: PortfolioId, assetId: AssetId, amount: BigDecimal): IO[RepositoryFailure, Unit] = ???
 
-    def getByPortfolioId(portfolioId: PortfolioId): IO[RepositoryException, List[PortfolioAsset]] = {
+    def getByPortfolioId(portfolioId: PortfolioId): IO[RepositoryFailure, List[PortfolioAsset]] = {
       val query = portfolioAssets.filter(_.portfolioId === portfolioId)
 
       ZIO.fromDBIO(query.result).provide(self)
         .map(_.toList)
         .refineOrDie {
-          case e: Exception => new RepositoryException(e)
+          case e: Exception => new RepositoryFailure(e)
         }
     }
 
-    def getByAssetId(assetId: AssetId): IO[RepositoryException, List[PortfolioAsset]] = ???
+    def getByAssetId(assetId: AssetId): IO[RepositoryFailure, List[PortfolioAsset]] = ???
   }
 
 }

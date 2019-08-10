@@ -12,15 +12,15 @@ object AssetRepository {
   
   trait Service {
 
-    def add(name: String, price: BigDecimal): IO[RepositoryException, AssetId]
+    def add(name: String, price: BigDecimal): IO[RepositoryFailure, AssetId]
 
-    val getAll: IO[RepositoryException, List[Asset]]
+    val getAll: IO[RepositoryFailure, List[Asset]]
     
-    def getById(id: AssetId): IO[RepositoryException, Option[Asset]]
+    def getById(id: AssetId): IO[RepositoryFailure, Option[Asset]]
 
-    def getByIds(ids: Set[AssetId]): IO[RepositoryException, List[Asset]]
+    def getByIds(ids: Set[AssetId]): IO[RepositoryFailure, List[Asset]]
 
-    def update(id: AssetId, name: String, price: BigDecimal): IO[RepositoryException, Unit]
+    def update(id: AssetId, name: String, price: BigDecimal): IO[RepositoryFailure, Unit]
   }
 
 }
