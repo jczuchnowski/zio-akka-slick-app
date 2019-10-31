@@ -1,27 +1,15 @@
 package example
 
-import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
-import akka.http.scaladsl.Http
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+import akka.http.scaladsl.model.headers.Location
 import akka.http.scaladsl.model._
+import akka.http.scaladsl.server.Directives
 import akka.http.scaladsl.server.Directives._
 import example.application.ApplicationService
-import example.domain.PortfolioStatus
+import example.domain.{ Asset, AssetId, PortfolioId, PortfolioStatus }
 import example.infrastructure._
 import example.interop.ZioSupport
-import example.interop.slick.DatabaseProvider
-import slick.driver.H2Driver.api._
-import scala.io.StdIn
-import scala.concurrent.Future
-
-import zio._
-
-import akka.http.scaladsl.server.Directives
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import example.domain.{ Asset, AssetId, PortfolioId }
 import spray.json._
-import akka.actor.Status
-import akka.http.scaladsl.model.headers.Location
 
 case class CreateAssetRequest(name: String, price: BigDecimal)
 case class UpdateAssetRequest(name: String, price: BigDecimal)
@@ -55,8 +43,8 @@ class Api(env: SlickAssetRepository with SlickPortfolioAssetRepository) extends 
         post {
           extractScheme { scheme =>
             extractHost { host => 
-              entity(as[CreateAssetRequest]) { req =>
-                ApplicationService.addAsset(req.name, req.price).provide(env).map { id => 
+              entity(Directives.as[CreateAssetRequest]) { req =>
+                ApplicationService.addAsset(req.name, req.price).provide(env).map { id =>
                   respondWithHeader(Location(Uri(scheme = scheme).withHost(host).withPath(Uri.Path(s"assets/$id")))) {
                     complete {
                       HttpResponse(StatusCodes.Created)
@@ -70,7 +58,7 @@ class Api(env: SlickAssetRepository with SlickPortfolioAssetRepository) extends 
       } ~
       path(LongNumber) { assetId =>
         put {
-          entity(as[UpdateAssetRequest]) { req =>
+          entity(Directives.as[UpdateAssetRequest]) { req =>
             complete(ApplicationService.updateAsset(AssetId(assetId), req.name, req.price).provide(env).map(_ => JsObject.empty))
           }
         }
@@ -86,7 +74,7 @@ class Api(env: SlickAssetRepository with SlickPortfolioAssetRepository) extends 
       } ~
       path("assets") {
         put {
-          entity(as[UpdatePortfolioRequest]) { req =>
+          entity(Directives.as[UpdatePortfolioRequest]) { req =>
             complete(ApplicationService.updatePortfolio(PortfolioId(portfolioId), AssetId(req.assetId), req.amount).provide(env))
           }
         }

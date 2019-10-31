@@ -1,11 +1,12 @@
 import Dependencies._
 
-ThisBuild / scalaVersion     := "2.12.8"
+ThisBuild / scalaVersion     := "2.12.10"
 ThisBuild / version          := "0.1.0-SNAPSHOT"
 ThisBuild / organization     := "com.example"
 ThisBuild / organizationName := "example"
 
 //-XX:MetaspaceSize=
+scalacOptions ++= Seq("-Ypartial-unification", "-deprecation")
 
 lazy val root = (project in file("."))
   .settings(
@@ -20,9 +21,9 @@ lazy val root = (project in file("."))
       slick,
       h2,
       scalaTest % Test,
+      scalaTestMockito % Test,
       akkaTestkit % Test,
-      akkaHttpTestkit % Test,
-      mockito % Test
+      akkaHttpTestkit % Test
     )
   )
 

@@ -6,7 +6,7 @@ import example.domain.PortfolioId
 import example.domain.PortfolioAsset
 import example.domain.RepositoryFailure
 import org.scalatest._
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.mockito.Mockito
 import zio.{ DefaultRuntime, IO }
 

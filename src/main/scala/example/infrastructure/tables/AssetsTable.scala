@@ -1,8 +1,8 @@
 package example.infrastructure.tables
 
-import slick.driver.H2Driver.api._
 import example.domain._
 import example.infrastructure.EntityIdMappers._
+import slick.jdbc.H2Profile.api._
 
 object AssetsTable {
 
@@ -14,7 +14,7 @@ object AssetsTable {
     def id = column[AssetId]("ID", O.PrimaryKey)
     def name = column[String]("NAME")
     def price = column[BigDecimal]("PRICE")
-    def * = LiftedAsset(id, name, price)
+    def * = LiftedAsset(id.?, name, price)
   }
 
 }

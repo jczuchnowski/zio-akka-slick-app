@@ -1,8 +1,8 @@
 package example.infrastructure.tables
 
-import slick.driver.H2Driver.api._
 import example.domain._
 import example.infrastructure.EntityIdMappers._
+import slick.jdbc.H2Profile.api._
 
 object PortfolioAssetsTable {
 

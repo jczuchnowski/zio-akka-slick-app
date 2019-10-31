@@ -1,7 +1,7 @@
 package example.infrastructure
 
 import example.domain.{ AssetId, PortfolioId }
-import slick.driver.H2Driver.api._
+import slick.jdbc.H2Profile.api._
 
 object EntityIdMappers {
 

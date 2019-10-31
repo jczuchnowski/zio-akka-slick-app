@@ -1,12 +1,12 @@
 package example.infrastructure
 
-import slick.driver.H2Driver.api._
-import zio.{ IO, ZIO }
 import example.domain._
 import example.infrastructure.EntityIdMappers._
 import example.infrastructure.tables.PortfolioAssetsTable
 import example.interop.slick.dbio._
 import example.interop.slick.DatabaseProvider
+import slick.jdbc.H2Profile.api._
+import zio.{ IO, ZIO }
 
 trait SlickPortfolioAssetRepository extends PortfolioAssetRepository with DatabaseProvider { self =>
 
