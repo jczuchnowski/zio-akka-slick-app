@@ -4,7 +4,7 @@ import example.domain.{ Asset, AssetId, AssetRepository }
 import example.domain.PortfolioAssetRepository
 import example.domain.PortfolioId
 import example.domain.PortfolioAsset
-import example.domain.RepositoryException
+import example.domain.RepositoryFailure
 import org.scalatest._
 import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito
@@ -24,7 +24,7 @@ class MockedSpec extends FlatSpec with Matchers with DefaultRuntime with Mockito
     Mockito.when(mockedAssetRepository.assetRepository.getAll).thenReturn(IO {
       List.empty
     } refineOrDie {
-      case e: Exception => new RepositoryException(e)
+      case e: Exception => new RepositoryFailure(e)
     })
     val result = this.unsafeRun(ApplicationService.getAssets.provide(mockedAssetRepository))
     result shouldEqual(List.empty)
@@ -38,7 +38,7 @@ class MockedSpec extends FlatSpec with Matchers with DefaultRuntime with Mockito
         PortfolioAsset(portfolioId, AssetId(1), BigDecimal(1)), 
         PortfolioAsset(portfolioId, AssetId(2), BigDecimal(1)))
     } refineOrDie {
-      case e: Exception => new RepositoryException(e)
+      case e: Exception => new RepositoryFailure(e)
     })
 
     Mockito.when(mockedAssetRepository.assetRepository.getByIds(Set(AssetId(1), AssetId(2)))).thenReturn(IO {
@@ -46,7 +46,7 @@ class MockedSpec extends FlatSpec with Matchers with DefaultRuntime with Mockito
         Asset(Some(AssetId(1)), "PLN", BigDecimal(1)), 
         Asset(Some(AssetId(2)), "USD", BigDecimal(1)))
     } refineOrDie {
-      case e: Exception => new RepositoryException(e)
+      case e: Exception => new RepositoryFailure(e)
     })
 
   }
