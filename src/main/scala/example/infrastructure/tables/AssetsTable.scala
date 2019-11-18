@@ -11,7 +11,7 @@ object AssetsTable {
   implicit object AssetShape extends CaseClassShape(LiftedAsset.tupled, Asset.tupled)
   
   class Assets(tag: Tag) extends Table[Asset](tag, "ASSETS") {
-    def id = column[AssetId]("ID", O.PrimaryKey)
+    def id = column[AssetId]("ID", O.PrimaryKey, O.AutoInc)
     def name = column[String]("NAME")
     def price = column[BigDecimal]("PRICE")
     def * = LiftedAsset(id.?, name, price)

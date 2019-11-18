@@ -14,7 +14,8 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(
       akkaHttp,
       akkaStream,
-      sprayJson,
+      json4s,
+      json4sJackson,
       scalazZio,
       scalazZioRS,
       scalazZioIntRS,

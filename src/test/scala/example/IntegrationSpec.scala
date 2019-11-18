@@ -1,7 +1,8 @@
 package example.application
 
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import example.{ Api, JsonSupport }
+import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
+import example.Api
 import example.domain.PortfolioAssetRepository
 import example.domain.PortfolioId
 import example.domain.PortfolioAsset
@@ -10,6 +11,7 @@ import example.infrastructure.{ SlickAssetRepository, SlickPortfolioAssetReposit
 import example.infrastructure.tables.{ AssetsTable, PortfolioAssetsTable }
 import example.interop.slick.DatabaseProvider
 import example.interop.slick.dbio._
+import org.json4s.{ DefaultFormats, jackson }
 import org.mockito.Mockito
 import org.scalatest._
 import zio.{ IO, ZIO }
@@ -17,8 +19,11 @@ import zio.DefaultRuntime
 import slick.jdbc.H2Profile.backend._
 import slick.lifted.TableQuery
 
-class IntegrationSpec extends FlatSpec with Matchers with DefaultRuntime with ScalatestRouteTest with JsonSupport {
+class IntegrationSpec extends FlatSpec with Matchers with DefaultRuntime with ScalatestRouteTest {
   
+  implicit val serialization = jackson.Serialization
+  implicit val formats       = DefaultFormats
+
   trait TestDatabaseProvider extends DatabaseProvider {
     override val databaseProvider = new DatabaseProvider.Service {
       override val db = ZIO.effectTotal(Database.forConfig("h2mem1"))

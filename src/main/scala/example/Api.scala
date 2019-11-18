@@ -1,36 +1,39 @@
 package example
 
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.model.headers.Location
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives
 import akka.http.scaladsl.server.Directives._
+import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 import example.application.ApplicationService
 import example.domain.{ Asset, AssetId, PortfolioId, PortfolioStatus }
 import example.infrastructure._
 import example.interop.ZioSupport
-import spray.json._
+import org.json4s.{ DefaultFormats, jackson, JObject }
 
 case class CreateAssetRequest(name: String, price: BigDecimal)
 case class UpdateAssetRequest(name: String, price: BigDecimal)
 case class UpdatePortfolioRequest(assetId: Long, amount: BigDecimal)
 
-trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
-  implicit object AssetIdFormat extends JsonFormat[AssetId] {
-    def write(m: AssetId) = JsNumber(m.value)
-    def read(json: JsValue) = json match {
-      case JsNumber(n) => AssetId(n.longValue())
-      case _ => deserializationError("Number expected")
-    }
-  }
-  implicit val assetFormat = jsonFormat3(Asset)
-  implicit val createAssetRequestFormat = jsonFormat2(CreateAssetRequest)
-  implicit val portfolioStatusFormat = jsonFormat1(PortfolioStatus)
-  implicit val updateAssetRequestFormat = jsonFormat2(UpdateAssetRequest)
-  implicit val updatePortfolioRequestFormat = jsonFormat2(UpdatePortfolioRequest)
-}
+// trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
+//   implicit object AssetIdFormat extends JsonFormat[AssetId] {
+//     def write(m: AssetId) = JsNumber(m.value)
+//     def read(json: JsValue) = json match {
+//       case JsNumber(n) => AssetId(n.longValue())
+//       case _ => deserializationError("Number expected")
+//     }
+//   }
+//   implicit val assetFormat = jsonFormat3(Asset)
+//   implicit val createAssetRequestFormat = jsonFormat2(CreateAssetRequest)
+//   implicit val portfolioStatusFormat = jsonFormat1(PortfolioStatus)
+//   implicit val updateAssetRequestFormat = jsonFormat2(UpdateAssetRequest)
+//   implicit val updatePortfolioRequestFormat = jsonFormat2(UpdatePortfolioRequest)
+// }
 
-class Api(env: SlickAssetRepository with SlickPortfolioAssetRepository) extends JsonSupport with ZioSupport {
+class Api(env: SlickAssetRepository with SlickPortfolioAssetRepository) extends ZioSupport {
+
+  implicit val serialization = jackson.Serialization
+  implicit val formats       = DefaultFormats
 
   lazy val route = assetRoute ~ portfolioRoute
 
@@ -45,7 +48,7 @@ class Api(env: SlickAssetRepository with SlickPortfolioAssetRepository) extends 
             extractHost { host => 
               entity(Directives.as[CreateAssetRequest]) { req =>
                 ApplicationService.addAsset(req.name, req.price).provide(env).map { id =>
-                  respondWithHeader(Location(Uri(scheme = scheme).withHost(host).withPath(Uri.Path(s"assets/$id")))) {
+                  respondWithHeader(Location(Uri(scheme = scheme).withHost(host).withPath(Uri.Path(s"/assets/${id.value}")))) {
                     complete {
                       HttpResponse(StatusCodes.Created)
                     }
@@ -59,7 +62,7 @@ class Api(env: SlickAssetRepository with SlickPortfolioAssetRepository) extends 
       path(LongNumber) { assetId =>
         put {
           entity(Directives.as[UpdateAssetRequest]) { req =>
-            complete(ApplicationService.updateAsset(AssetId(assetId), req.name, req.price).provide(env).map(_ => JsObject.empty))
+            complete(ApplicationService.updateAsset(AssetId(assetId), req.name, req.price).provide(env).map(_ => JObject()))
           }
         }
       }
