@@ -6,7 +6,7 @@ ThisBuild / organization     := "com.example"
 ThisBuild / organizationName := "example"
 
 //-XX:MetaspaceSize=
-scalacOptions ++= Seq("-Ypartial-unification", "-deprecation")
+scalacOptions ++= Seq("-Ypartial-unification", "-deprecation", "-feature", "-Ywarn-unused:imports")
 
 lazy val root = (project in file("."))
   .settings(

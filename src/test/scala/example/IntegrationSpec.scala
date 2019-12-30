@@ -2,22 +2,18 @@ package example.application
 
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import example.{ Api, JsonSupport }
-import example.domain.PortfolioAssetRepository
-import example.domain.PortfolioId
-import example.domain.PortfolioAsset
-import example.domain.{ Asset, AssetId, AssetRepository }
+import example.domain.{ Asset, AssetId, PortfolioAsset, PortfolioId }
 import example.infrastructure.{ SlickAssetRepository, SlickPortfolioAssetRepository }
 import example.infrastructure.tables.{ AssetsTable, PortfolioAssetsTable }
 import example.interop.slick.DatabaseProvider
 import example.interop.slick.dbio._
-import org.mockito.Mockito
-import org.scalatest._
-import zio.{ IO, ZIO }
-import zio.DefaultRuntime
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 import slick.jdbc.H2Profile.backend._
 import slick.lifted.TableQuery
+import zio.{ DefaultRuntime, ZIO }
 
-class IntegrationSpec extends FlatSpec with Matchers with DefaultRuntime with ScalatestRouteTest with JsonSupport {
+class IntegrationSpec extends AnyFlatSpec with Matchers with DefaultRuntime with ScalatestRouteTest with JsonSupport {
   
   trait TestDatabaseProvider extends DatabaseProvider {
     override val databaseProvider = new DatabaseProvider.Service {

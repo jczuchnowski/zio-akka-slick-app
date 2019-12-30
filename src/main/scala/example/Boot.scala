@@ -1,12 +1,7 @@
 package example
 
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.model._
-import akka.http.scaladsl.server.Directives._
-import example.application.ApplicationService
-import example.domain.PortfolioStatus
 import example.infrastructure._
 import example.interop.slick.dbio._
 import slick.driver.H2Driver.api._
@@ -19,10 +14,9 @@ import example.infrastructure.tables.PortfolioAssetsTable
 object Boot extends App {
 
   val runtime = new DefaultRuntime() {}
-  implicit val ec = runtime.Platform.executor.asEC
+  implicit val ec = runtime.platform.executor.asEC
   
   implicit val system = ActorSystem(name = "zio-example-system", defaultExecutionContext = Some(ec))
-  implicit val materializer = ActorMaterializer()
 
   class LiveEnv 
     extends SlickAssetRepository 

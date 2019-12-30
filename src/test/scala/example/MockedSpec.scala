@@ -5,12 +5,13 @@ import example.domain.PortfolioAssetRepository
 import example.domain.PortfolioId
 import example.domain.PortfolioAsset
 import example.domain.RepositoryFailure
-import org.scalatest._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import org.mockito.Mockito
 import zio.{ DefaultRuntime, IO }
 
-class MockedSpec extends FlatSpec with Matchers with DefaultRuntime with MockitoSugar {
+class MockedSpec extends AnyFlatSpec with Matchers with DefaultRuntime with MockitoSugar {
   
   val mockedAssetRepository: AssetRepository = new AssetRepository() {
     val assetRepository: AssetRepository.Service = mock[AssetRepository.Service]

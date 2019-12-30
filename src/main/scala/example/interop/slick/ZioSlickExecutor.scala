@@ -1,6 +1,6 @@
 package example.interop.slick
 
-import zio.{ DefaultRuntime, UIO }
+import zio.DefaultRuntime
 import zio.blocking.Blocking
 import _root_.slick.util.AsyncExecutor
 

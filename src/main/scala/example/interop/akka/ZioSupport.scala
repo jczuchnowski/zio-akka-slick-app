@@ -6,6 +6,7 @@ import akka.http.scaladsl.server.{ Route, RouteResult }
 import zio.{ DefaultRuntime, Task, ZIO }
 
 import scala.concurrent.{ Future, Promise }
+import scala.language.implicitConversions
 
 trait ZioSupport extends DefaultRuntime { self =>
 

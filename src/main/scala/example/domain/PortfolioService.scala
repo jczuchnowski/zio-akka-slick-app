@@ -1,6 +1,6 @@
 package example.domain
 
-import zio.{ IO, UIO, ZIO }
+import zio.ZIO
 
 object PortfolioService {
 

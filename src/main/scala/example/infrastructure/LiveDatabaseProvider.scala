@@ -1,6 +1,6 @@
 package example.infrastructure
 
-import example.interop.slick.{ DatabaseProvider, ZioSlickExecutorProvider }
+import example.interop.slick.DatabaseProvider
 import zio.ZIO
 import slick.jdbc.H2Profile.backend._
 
