@@ -38,7 +38,9 @@ class Api(env: SlickAssetRepository with SlickPortfolioAssetRepository) extends 
     pathPrefix("assets") {
       pathEnd {
         get {
-          complete(ApplicationService.getAssets.provide(env))
+          extractExecutionContext { implicit ec =>
+            complete(ApplicationService.getAssets.provide(env))
+          }
         } ~
         post {
           extractScheme { scheme =>

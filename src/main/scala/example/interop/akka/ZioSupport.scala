@@ -1,20 +1,34 @@
 package example.interop
 
-import akka.http.scaladsl.marshalling.{ Marshaller, Marshalling }
-import akka.http.scaladsl.model.HttpResponse
+import akka.http.scaladsl.marshalling.{ Marshaller, Marshalling, PredefinedToResponseMarshallers }
+import akka.http.scaladsl.model.{ HttpResponse, StatusCodes }
 import akka.http.scaladsl.server.{ Route, RouteResult }
-import zio.{ DefaultRuntime, Task, ZIO }
+import example.domain.{ DomainError, RepositoryError, ValidationError }
+import zio.{ DefaultRuntime, IO, ZIO }
 
 import scala.concurrent.{ Future, Promise }
 import scala.language.implicitConversions
+import akka.http.scaladsl.server.RequestContext
+import akka.http.scaladsl.server.RouteResult.Complete
 
 trait ZioSupport extends DefaultRuntime { self =>
 
-  implicit def zioMarshaller[A](implicit m1: Marshaller[A, HttpResponse], m2: Marshaller[Throwable, HttpResponse]): Marshaller[Task[A], HttpResponse] =
+  implicit val errorMapper: DomainError => HttpResponse =
+    _ match {
+      case RepositoryError(msg) => HttpResponse(StatusCodes.InternalServerError)
+      case ValidationError(msg) => HttpResponse(StatusCodes.BadRequest)
+    }
+
+  implicit val errorMarshaller: Marshaller[DomainError, HttpResponse] =
+    Marshaller { implicit ec => a =>
+      PredefinedToResponseMarshallers.fromResponse(a)
+    }
+
+  implicit def zioMarshaller[A](implicit m1: Marshaller[A, HttpResponse], m2: Marshaller[DomainError, HttpResponse]): Marshaller[IO[DomainError, A], HttpResponse] =
     Marshaller { implicit ec => a => {
       val r = a.foldM(
-        e => Task.fromFuture(implicit ec => m2(e)), 
-        a => Task.fromFuture(implicit ec => m1(a))
+        e => IO.fromFuture(implicit ec => m2(e)), 
+        a => IO.fromFuture(implicit ec => m1(a))
       )
       
       val p = Promise[List[Marshalling[HttpResponse]]]()
@@ -31,13 +45,16 @@ trait ZioSupport extends DefaultRuntime { self =>
     b  <- ZIO.fromFuture(_ => a)
   } yield b
 
-  implicit def zioRoute(z: ZIO[Any, Throwable, Route]): Route = ctx => {
+  implicit def zioRoute(z: ZIO[Any, DomainError, Route]): Route = ctx => {
     val p = Promise[RouteResult]()
-
-    val f = z.flatMap(r => fromFunction(r)).provide(ctx)
+    
+    val f = z.fold(
+      e => (ctx: RequestContext) => Future.successful(Complete(errorMapper(e))),
+      a => a
+    )
 
     self.unsafeRunAsync(f) { exit => 
-      exit.fold(e => p.failure(e.squash), s => p.success(s))
+      exit.fold(e => p.failure(e.squash), s => s.apply(ctx))
     }
 
     p.future
