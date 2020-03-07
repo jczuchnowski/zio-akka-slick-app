@@ -6,10 +6,11 @@ import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives
 import akka.http.scaladsl.server.Directives._
 import example.application.ApplicationService
-import example.domain.{ Asset, AssetId, PortfolioId, PortfolioStatus }
+import example.domain._
 import example.infrastructure._
-import example.interop.ZioSupport
+import example.interop.{ ErrorMapper, ZioSupport }
 import spray.json._
+import example.domain.DomainError
 
 case class CreateAssetRequest(name: String, price: BigDecimal)
 case class UpdateAssetRequest(name: String, price: BigDecimal)
@@ -33,6 +34,13 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
 class Api(env: SlickAssetRepository with SlickPortfolioAssetRepository, port: Int) extends JsonSupport with ZioSupport {
 
   lazy val route = assetRoute ~ portfolioRoute
+
+  implicit val domainErrorMapper = new ErrorMapper[DomainError] {
+    def toHttpResponse(e: DomainError): HttpResponse = e match {
+      case RepositoryError(cause) => HttpResponse(StatusCodes.InternalServerError)
+      case ValidationError(msg)   => HttpResponse(StatusCodes.BadRequest)
+    }
+  }
 
   val assetRoute =
     pathPrefix("assets") {
