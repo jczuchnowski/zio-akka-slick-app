@@ -28,7 +28,10 @@ object Boot extends App {
   val assets = TableQuery[AssetsTable.Assets]
   val portfolioAssets = TableQuery[PortfolioAssetsTable.PortfolioAssets]
 
-  val api = new Api(liveEnv)
+  val host = "localhost"
+  val port = 8080
+
+  val api = new Api(liveEnv, port)
 
   val setup = {
     import slick.jdbc.H2Profile.api._
@@ -41,7 +44,7 @@ object Boot extends App {
   runtime.unsafeRun(setupIO)
  
 
-  val bindingFuture = Http().bindAndHandle(api.route, "localhost", 8080)
+  val bindingFuture = Http().bindAndHandle(api.route, host, port)
 
   println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
     StdIn.readLine()

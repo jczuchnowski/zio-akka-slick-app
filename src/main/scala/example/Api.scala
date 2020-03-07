@@ -30,7 +30,7 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val updatePortfolioRequestFormat = jsonFormat2(UpdatePortfolioRequest)
 }
 
-class Api(env: SlickAssetRepository with SlickPortfolioAssetRepository) extends JsonSupport with ZioSupport {
+class Api(env: SlickAssetRepository with SlickPortfolioAssetRepository, port: Int) extends JsonSupport with ZioSupport {
 
   lazy val route = assetRoute ~ portfolioRoute
 
@@ -47,7 +47,7 @@ class Api(env: SlickAssetRepository with SlickPortfolioAssetRepository) extends 
             extractHost { host => 
               entity(Directives.as[CreateAssetRequest]) { req =>
                 ApplicationService.addAsset(req.name, req.price).provide(env).map { id =>
-                  respondWithHeader(Location(Uri(scheme = scheme).withHost(host).withPath(Uri.Path(s"assets/$id")))) {
+                  respondWithHeader(Location(Uri(scheme = scheme).withAuthority(host, port).withPath(Uri.Path(s"/assets/${id.value}")))) {
                     complete {
                       HttpResponse(StatusCodes.Created)
                     }
