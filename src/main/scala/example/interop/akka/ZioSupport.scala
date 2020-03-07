@@ -15,8 +15,8 @@ trait ZioSupport extends DefaultRuntime { self =>
 
   implicit val errorMapper: DomainError => HttpResponse =
     _ match {
-      case RepositoryError(msg) => HttpResponse(StatusCodes.InternalServerError)
-      case ValidationError(msg) => HttpResponse(StatusCodes.BadRequest)
+      case RepositoryError(cause) => HttpResponse(StatusCodes.InternalServerError)
+      case ValidationError(msg)   => HttpResponse(StatusCodes.BadRequest)
     }
 
   implicit val errorMarshaller: Marshaller[DomainError, HttpResponse] =
@@ -54,7 +54,7 @@ trait ZioSupport extends DefaultRuntime { self =>
     )
 
     self.unsafeRunAsync(f) { exit => 
-      exit.fold(e => p.failure(e.squash), s => s.apply(ctx))
+      exit.fold(e => p.failure(e.squash), s => p.completeWith(s.apply(ctx)))
     }
 
     p.future
