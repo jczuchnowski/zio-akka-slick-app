@@ -4,7 +4,7 @@ object Dependencies {
 
   val akkaVersion     = "2.6.1"
   val akkaHttpVersion = "10.1.11"
-  val zioVersion      = "1.0.0-RC17"
+  val zioVersion      = "1.0.0-RC18"
 
   lazy val akkaHttp         = "com.typesafe.akka"  %% "akka-http"            % akkaHttpVersion
   lazy val akkaStream       = "com.typesafe.akka"  %% "akka-stream"          % akkaVersion

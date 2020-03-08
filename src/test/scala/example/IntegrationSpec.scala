@@ -11,10 +11,15 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import slick.jdbc.H2Profile.backend._
 import slick.lifted.TableQuery
-import zio.{ DefaultRuntime, ZIO }
+import zio.{ Runtime, ZIO }
+import zio.internal.Platform
 
-class IntegrationSpec extends AnyFlatSpec with Matchers with DefaultRuntime with ScalatestRouteTest with JsonSupport {
+class IntegrationSpec extends AnyFlatSpec with Matchers with Runtime[Unit] with ScalatestRouteTest with JsonSupport {
   
+  override val environment: Unit = Runtime.default.environment
+
+  override val platform: Platform = Runtime.default.platform
+
   trait TestDatabaseProvider extends DatabaseProvider {
     override val databaseProvider = new DatabaseProvider.Service {
       override val db = ZIO.effectTotal(Database.forConfig("h2mem1"))

@@ -3,7 +3,7 @@ package example.interop.akka
 import akka.http.scaladsl.marshalling.{ Marshaller, Marshalling, PredefinedToResponseMarshallers }
 import akka.http.scaladsl.model.HttpResponse
 import akka.http.scaladsl.server.{ Route, RouteResult }
-import zio.{ DefaultRuntime, IO, ZIO }
+import zio.{ IO, Runtime, ZIO }
 
 import scala.concurrent.{ Future, Promise }
 import scala.language.implicitConversions
@@ -14,7 +14,7 @@ trait ErrorMapper[E] {
   def toHttpResponse(e: E): HttpResponse
 }
 
-trait ZioSupport extends DefaultRuntime { self =>
+trait ZioSupport extends Runtime[Unit] { self =>
 
   implicit def errorMarshaller[E: ErrorMapper]: Marshaller[E, HttpResponse] =
     Marshaller { implicit ec => a =>

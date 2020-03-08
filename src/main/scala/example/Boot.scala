@@ -6,14 +6,13 @@ import example.infrastructure._
 import example.interop.slick.dbio._
 import slick.driver.H2Driver.api._
 import scala.io.StdIn
-import zio.{ DefaultRuntime, ZIO }
-import zio.blocking.Blocking
+import zio.{ Runtime, ZIO }
 import example.infrastructure.tables.AssetsTable
 import example.infrastructure.tables.PortfolioAssetsTable
 
 object Boot extends App {
 
-  val runtime = new DefaultRuntime() {}
+  val runtime = Runtime.default
   implicit val ec = runtime.platform.executor.asEC
   
   implicit val system = ActorSystem(name = "zio-example-system", defaultExecutionContext = Some(ec))
@@ -22,7 +21,6 @@ object Boot extends App {
     extends SlickAssetRepository 
     with SlickPortfolioAssetRepository 
     with LiveDatabaseProvider
-    with Blocking.Live
 
   val liveEnv = new LiveEnv
   val assets = TableQuery[AssetsTable.Assets]

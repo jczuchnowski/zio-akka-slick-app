@@ -6,10 +6,15 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import org.mockito.Mockito
-import zio.{ DefaultRuntime, IO }
+import zio.{ Runtime, IO }
+import zio.internal.Platform
 
-class MockedSpec extends AnyFlatSpec with Matchers with DefaultRuntime with MockitoSugar {
+class MockedSpec extends AnyFlatSpec with Matchers with Runtime[Unit] with MockitoSugar {
   
+  override val environment: Unit = Runtime.default.environment
+
+  override val platform: Platform = Runtime.default.platform
+
   val mockedAssetRepository: AssetRepository = new AssetRepository() {
     val assetRepository: AssetRepository.Service = mock[AssetRepository.Service]
   }
