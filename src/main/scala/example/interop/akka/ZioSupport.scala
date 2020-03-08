@@ -1,4 +1,4 @@
-package example.interop
+package example.interop.akka
 
 import akka.http.scaladsl.marshalling.{ Marshaller, Marshalling, PredefinedToResponseMarshallers }
 import akka.http.scaladsl.model.HttpResponse

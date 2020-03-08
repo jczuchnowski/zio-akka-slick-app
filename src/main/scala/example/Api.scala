@@ -8,9 +8,8 @@ import akka.http.scaladsl.server.Directives._
 import example.application.ApplicationService
 import example.domain._
 import example.infrastructure._
-import example.interop.{ ErrorMapper, ZioSupport }
+import example.interop.akka.{ ErrorMapper, ZioSupport }
 import spray.json._
-import example.domain.DomainError
 
 case class CreateAssetRequest(name: String, price: BigDecimal)
 case class UpdateAssetRequest(name: String, price: BigDecimal)
@@ -46,9 +45,7 @@ class Api(env: SlickAssetRepository with SlickPortfolioAssetRepository, port: In
     pathPrefix("assets") {
       pathEnd {
         get {
-          extractExecutionContext { implicit ec =>
-            complete(ApplicationService.getAssets.provide(env))
-          }
+          complete(ApplicationService.getAssets.provide(env))
         } ~
         post {
           extractScheme { scheme =>
