@@ -12,10 +12,9 @@ import example.infrastructure.tables.PortfolioAssetsTable
 
 object Boot extends App {
 
-  val runtime = Runtime.default
-  implicit val ec = runtime.platform.executor.asEC
   
-  implicit val system = ActorSystem(name = "zio-example-system", defaultExecutionContext = Some(ec))
+  implicit val system = ActorSystem(name = "zio-example-system")
+  implicit val ec = system.dispatcher
 
   class LiveEnv 
     extends SlickAssetRepository 
@@ -39,7 +38,7 @@ object Boot extends App {
   }
 
   val setupIO = ZIO.fromDBIO(setup).provide(liveEnv)
-  runtime.unsafeRun(setupIO)
+  Runtime.default.unsafeRun(setupIO)
  
 
   val bindingFuture = Http().bindAndHandle(api.route, host, port)
