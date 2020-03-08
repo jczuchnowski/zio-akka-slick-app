@@ -6,9 +6,9 @@ import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives
 import akka.http.scaladsl.server.Directives._
 import example.application.ApplicationService
-import example.domain.{ Asset, AssetId, PortfolioId, PortfolioStatus }
+import example.domain._
 import example.infrastructure._
-import example.interop.ZioSupport
+import example.interop.akka.{ ErrorMapper, ZioSupport }
 import spray.json._
 
 case class CreateAssetRequest(name: String, price: BigDecimal)
@@ -30,9 +30,16 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val updatePortfolioRequestFormat = jsonFormat2(UpdatePortfolioRequest)
 }
 
-class Api(env: SlickAssetRepository with SlickPortfolioAssetRepository) extends JsonSupport with ZioSupport {
+class Api(env: SlickAssetRepository with SlickPortfolioAssetRepository, port: Int) extends JsonSupport with ZioSupport {
 
   lazy val route = assetRoute ~ portfolioRoute
+
+  implicit val domainErrorMapper = new ErrorMapper[DomainError] {
+    def toHttpResponse(e: DomainError): HttpResponse = e match {
+      case RepositoryError(cause) => HttpResponse(StatusCodes.InternalServerError)
+      case ValidationError(msg)   => HttpResponse(StatusCodes.BadRequest)
+    }
+  }
 
   val assetRoute =
     pathPrefix("assets") {
@@ -45,7 +52,7 @@ class Api(env: SlickAssetRepository with SlickPortfolioAssetRepository) extends 
             extractHost { host => 
               entity(Directives.as[CreateAssetRequest]) { req =>
                 ApplicationService.addAsset(req.name, req.price).provide(env).map { id =>
-                  respondWithHeader(Location(Uri(scheme = scheme).withHost(host).withPath(Uri.Path(s"assets/$id")))) {
+                  respondWithHeader(Location(Uri(scheme = scheme).withAuthority(host, port).withPath(Uri.Path(s"/assets/${id.value}")))) {
                     complete {
                       HttpResponse(StatusCodes.Created)
                     }

@@ -1,10 +1,7 @@
 package example.application
 
 import example.domain.{ Asset, AssetId, AssetRepository }
-import example.domain.PortfolioAssetRepository
-import example.domain.PortfolioId
-import example.domain.PortfolioAsset
-import example.domain.RepositoryFailure
+import example.domain.{ PortfolioAssetRepository, PortfolioAsset, PortfolioId, RepositoryError }
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.mockito.MockitoSugar
@@ -25,12 +22,12 @@ class MockedSpec extends AnyFlatSpec with Matchers with DefaultRuntime with Mock
     Mockito.when(mockedAssetRepository.assetRepository.getAll).thenReturn(IO {
       List.empty
     } refineOrDie {
-      case e: Exception => new RepositoryFailure(e)
+      case e: Exception => RepositoryError(e)
     })
     val result = this.unsafeRun(ApplicationService.getAssets.provide(mockedAssetRepository))
     result shouldEqual(List.empty)
   }
- 
+  
   "ApplicationService.getPortfolio" should "return a portfolio" in {
     val portfolioId = PortfolioId(1)
 
@@ -39,7 +36,7 @@ class MockedSpec extends AnyFlatSpec with Matchers with DefaultRuntime with Mock
         PortfolioAsset(portfolioId, AssetId(1), BigDecimal(1)), 
         PortfolioAsset(portfolioId, AssetId(2), BigDecimal(1)))
     } refineOrDie {
-      case e: Exception => new RepositoryFailure(e)
+      case e: Exception => RepositoryError(e)
     })
 
     Mockito.when(mockedAssetRepository.assetRepository.getByIds(Set(AssetId(1), AssetId(2)))).thenReturn(IO {
@@ -47,7 +44,7 @@ class MockedSpec extends AnyFlatSpec with Matchers with DefaultRuntime with Mock
         Asset(Some(AssetId(1)), "PLN", BigDecimal(1)), 
         Asset(Some(AssetId(2)), "USD", BigDecimal(1)))
     } refineOrDie {
-      case e: Exception => new RepositoryFailure(e)
+      case e: Exception => RepositoryError(e)
     })
 
   }

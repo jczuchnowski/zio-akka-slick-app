@@ -4,7 +4,7 @@ import zio.ZIO
 
 object PortfolioService {
 
-  def calculatePortfolioStatus(portfolioId: PortfolioId): ZIO[AssetRepository with PortfolioAssetRepository, Exception, PortfolioStatus] = 
+  def calculatePortfolioStatus(portfolioId: PortfolioId): ZIO[AssetRepository with PortfolioAssetRepository, DomainError, PortfolioStatus] = 
     for {
       portfolioAssets <- ZIO.accessM[PortfolioAssetRepository](_.portfolioAssetRepository.getByPortfolioId(portfolioId))
       assetIds        =  portfolioAssets.map(_.assetId).toSet
@@ -15,7 +15,7 @@ object PortfolioService {
                             }        
     } yield PortfolioStatus(total)
 
-  def topPortfolioForAsset(assetId: AssetId): ZIO[AssetRepository with PortfolioAssetRepository, Exception, Option[BigDecimal]] = 
+  def topPortfolioForAsset(assetId: AssetId): ZIO[AssetRepository with PortfolioAssetRepository, DomainError, Option[BigDecimal]] = 
     for {
       portfolioAssets <- ZIO.accessM[PortfolioAssetRepository](_.portfolioAssetRepository.getByAssetId(assetId))
       assetOpt        <- ZIO.accessM[AssetRepository](_.assetRepository.getById(assetId))
