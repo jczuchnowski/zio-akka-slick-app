@@ -24,7 +24,7 @@ class IntegrationSpec extends AnyFlatSpec with Matchers with DefaultRuntime with
   class TestEnv extends SlickAssetRepository with SlickPortfolioAssetRepository with TestDatabaseProvider
 
   val testEnv = new TestEnv()
-  val api = new Api(testEnv)
+  val api = new Api(testEnv, 8080)
 
 
   val assets = TableQuery[AssetsTable.Assets]
