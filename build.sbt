@@ -20,6 +20,8 @@ lazy val root = (project in file("."))
       scalazZioIntRS,
       slick,
       h2,
+      logback,
+      akkaSlf4j,
       scalaTest % Test,
       scalaTestMockito % Test,
       akkaTestkit % Test,
